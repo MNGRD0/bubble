@@ -14,12 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->boolean('completed')->default(false);
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
-        });
+    $table->id(); // bigint unsigned
+    $table->string('name');
+    $table->boolean('completed')->default(false);
+    $table->foreignId('category_id')->constrained()->onDelete('cascade'); // OK si table "categories" existe déjà
+    $table->timestamps();
+});
+
     }
 
     /**

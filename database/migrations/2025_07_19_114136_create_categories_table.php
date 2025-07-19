@@ -12,11 +12,12 @@ return new class extends Migration
     public function up()
 {
     Schema::create('categories', function (Blueprint $table) {
-        $table->id();
-        $table->string('name'); // Nom de la catégorie
-        $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Référence à l'utilisateur
-        $table->timestamps();
-    });
+    $table->id(); // bigint unsigned
+    $table->string('name');
+    $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    $table->timestamps();
+});
+
 }
 
 
