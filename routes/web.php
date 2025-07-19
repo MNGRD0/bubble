@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\RecetteController;
+use App\Http\Controllers\CategorieRecetteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,18 +60,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('recettes')->name('recettes.')->group(function () {
-        Route::get('/', [RecetteController::class, 'index'])->name('index');
-        Route::post('/categories', [RecetteController::class, 'storeCategorie'])->name('categories.store');
-        Route::delete('/categorie/{id}', [RecetteController::class, 'destroyCategorie'])->name('categorie.destroy');
-        Route::get('/categorie/{id}', [RecetteController::class, 'showCategorie'])->name('categorie.show');
-        Route::get('/{categorieId}/create', [RecetteController::class, 'create'])->name('create');
-        Route::post('/', [RecetteController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [RecetteController::class, 'edit'])->name('edit');
-        Route::put('/{recette}', [RecetteController::class, 'update'])->name('update');
+    Route::get('/', [RecetteController::class, 'index'])->name('index');
+    Route::post('/categories', [RecetteController::class, 'storeCategorie'])->name('categories.store');
+    Route::delete('/categorie/{id}', [RecetteController::class, 'destroyCategorie'])->name('categorie.destroy');
+    Route::get('/categorie/{id}', [RecetteController::class, 'showCategorie'])->name('categorie.show');
 
-        Route::delete('/{id}', [RecetteController::class, 'destroy'])->name('destroy');
-        Route::get('/{id}', [RecetteController::class, 'show'])->name('show');
-    });
+    Route::get('/{categorieId}/create', [RecetteController::class, 'create'])->name('create');
+    Route::post('/', [RecetteController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [RecetteController::class, 'edit'])->name('edit');
+    Route::put('/{recette}', [RecetteController::class, 'update'])->name('update');
+    Route::delete('/{id}', [RecetteController::class, 'destroy'])->name('destroy');
+    Route::get('/{id}', [RecetteController::class, 'show'])->name('show');
+
+    // ✅ Routes correctes pour les catégories de recettes
+    Route::get('/categories_recettes/{id}/edit', [CategorieRecetteController::class, 'edit'])->name('categories_recettes.edit');
+    Route::put('/categories_recettes/{id}', [CategorieRecetteController::class, 'update'])->name('categories_recettes.update');
+});
+
+
 
     /*
     |--------------------------------------------------------------------------

@@ -101,18 +101,14 @@ public function edit($id)
     }
 
     // ❌ Supprime une recette
-    public function destroy(Recette $recette)
-    {
-        
+    public function destroy($id)
+{
+    $recette = Recette::where('user_id', auth()->id())->findOrFail($id);
+    $recette->delete();
 
-        if ($recette->image) {
-            Storage::disk('public')->delete($recette->image);
-        }
+    return redirect()->back()->with('success', 'Recette supprimée avec succès.');
+}
 
-        $recette->delete();
-
-        return redirect()->route('recettes.index')->with('success', 'Recette supprimée.');
-    }
 
     // ➕ Crée une catégorie
     public function storeCategorie(Request $request)

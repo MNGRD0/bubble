@@ -60,43 +60,47 @@
     @if($recettes->count())
         <div class="grid gap-6" id="recette-list">
             @foreach($recettes->take(5) as $recette)
-                <div class="bg-white rounded shadow p-4 flex items-center gap-4">
+    <div class="bg-white rounded shadow p-4 flex items-center gap-4">
 
-                    {{-- Image cliquable --}}
-                    <div class="w-16 h-16 bg-pink-100 rounded-xl flex items-center justify-center overflow-hidden">
-                        @if($recette->image)
-                            <a href="{{ route('recettes.show', $recette->id) }}">
-                                <img src="{{ asset('storage/' . $recette->image) }}" alt="Image"
-                                     class="object-cover w-16 h-16 rounded">
-                            </a>
-                        @else
-                            <span class="text-gray-400 text-xs text-center">Aucune image</span>
-                        @endif
-                    </div>
+        {{-- Image cliquable --}}
+        <div class="w-16 h-16 bg-pink-100 rounded-xl flex items-center justify-center overflow-hidden">
+            @if($recette->image)
+                <a href="{{ route('recettes.show', $recette->id) }}">
+                    <img src="{{ asset('storage/' . $recette->image) }}" alt="Image"
+                         class="object-cover w-16 h-16 rounded">
+                </a>
+            @else
+                <span class="text-gray-400 text-xs text-center">Aucune image</span>
+            @endif
+        </div>
 
-                    {{-- Infos recette --}}
-                    <div class="flex-1">
-                        <h2 class="text-lg font-bold mb-1">{{ $recette->titre }}</h2>
-                        <p class="text-sm text-gray-500 mb-1">Catégorie : {{ $recette->categorie->nom ?? 'Non catégorisée' }}</p>
-                        <p class="text-gray-700 text-sm">{{ Str::limit($recette->ingredients, 100) }}</p>
+        {{-- Infos recette --}}
+        <div class="flex-1">
+            <h2 class="text-lg font-bold mb-1">{{ $recette->titre }}</h2>
+            <p class="text-sm text-gray-500 mb-1">Catégorie : {{ $recette->categorie->nom ?? 'Non catégorisée' }}</p>
+            <p class="text-gray-700 text-sm">{{ Str::limit($recette->ingredients, 100) }}</p>
 
-                        <div class="mt-2 flex gap-3 flex-wrap text-sm items-center">
-                            <a href="{{ route('recettes.show', $recette->id) }}" class="text-pink-600 hover:underline">👁️ Voir</a>
-                            <a href="{{ route('recettes.edit', $recette->id) }}" class="text-blue-500 hover:underline">✏️ Modifier</a>
-                            <form action="{{ route('recettes.destroy', $recette->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        title="Supprimer la recette"
-                                        class="w-6 h-6 rounded-full bg-pink-200 text-pink-700 font-bold leading-none flex items-center justify-center hover:bg-pink-300">
-                                    −
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+            <div class="mt-2 flex gap-3 flex-wrap text-sm items-center">
+                <a href="{{ route('recettes.show', $recette->id) }}" class="text-pink-600 hover:underline">👁️ Voir</a>
+                <a href="{{ route('recettes.edit', $recette->id) }}" class="text-blue-500 hover:underline">✏️ Modifier</a>
 
-                </div>
-            @endforeach
+                {{-- ✅ Supprimer avec confirmation --}}
+                <form id="delete-recette-{{ $recette->id }}" action="{{ route('recettes.destroy', $recette->id) }}" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button"
+                            onclick="if(confirm('Voulez-vous vraiment supprimer cette recette ?')) document.getElementById('delete-recette-{{ $recette->id }}').submit();"
+                            title="Supprimer la recette"
+                            class="w-6 h-6 rounded-full bg-pink-200 text-pink-700 font-bold leading-none flex items-center justify-center hover:bg-pink-300">
+                        −
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+@endforeach
+
         </div>
 
         {{-- Boutons pagination dynamiques --}}
