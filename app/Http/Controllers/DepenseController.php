@@ -2,46 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Depense;
 use App\Models\Budget;
+use Illuminate\Http\Request;
 
 class DepenseController extends Controller
 {
-    // ➕ Formulaire d'ajout de dépense
     public function create($budgetId)
     {
-        $budget = Budget::where('id', $budgetId)->where('user_id', Auth::id())->firstOrFail();
+        $budget = Budget::where('user_id', auth()->id())->findOrFail($budgetId);
         return view('depenses.create', compact('budget'));
     }
 
-    // 💾 Enregistrement d'une dépense
-    public function store(Request $request, $budgetId)
-    {
-        $budget = Budget::where('id', $budgetId)->where('user_id', Auth::id())->firstOrFail();
+ public function store(Request $request, $budgetId)
+{
+    $request->validate([
+        'libelle' => 'required|string|max:255',
+        'montant' => 'required|numeric|min:0.01',
+        'type'    => 'required|in:depense,entree',
+    ]);
 
-        $data = $request->validate([
-            'description' => 'required|string|max:255',
-            'montant' => 'required|numeric|min:0',
-        ]);
+    $budget = Budget::where('user_id', auth()->id())->findOrFail($budgetId);
 
-        $data['budget_id'] = $budget->id;
+    // Force proprement les données
+    $type = strtolower(trim($request->type));
+    $montant = abs($request->montant); // on stocke TOUJOURS des positifs
 
-        Depense::create($data);
+    $budget->depenses()->create([
+        'nom'     => $request->libelle,
+        'montant' => $montant,
+        'type'    => $type,
+        'user_id' => auth()->id(),
+    ]);
 
-        return redirect()->route('budget.index')->with('success', 'Dépense ajoutée avec succès.');
-    }
+    return redirect()->route('budgets.show', $budget->id)->with('success', 'Ajout effectué avec succès !');
+}
 
-    // 🗑️ Suppression d’une dépense
+
+
+
+
     public function destroy($id)
     {
         $depense = Depense::findOrFail($id);
 
-        $budget = Budget::where('id', $depense->budget_id)->where('user_id', Auth::id())->firstOrFail();
+        if ($depense->user_id !== auth()->id()) {
+            abort(403);
+        }
 
         $depense->delete();
 
-        return redirect()->route('budget.index')->with('success', 'Dépense supprimée.');
+        return redirect()->back()->with('success', 'Dépense supprimée.');
     }
 }

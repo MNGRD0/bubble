@@ -53,8 +53,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{id}/edit', [BudgetController::class, 'edit'])->name('edit');
         Route::put('/{id}', [BudgetController::class, 'update'])->name('update');
         Route::delete('/{id}', [BudgetController::class, 'destroy'])->name('destroy');
-    });
+        
 
+
+    });
+Route::get('/budgets/{id}', [App\Http\Controllers\BudgetController::class, 'show'])->name('budgets.show');
     Route::prefix('depenses')->name('depenses.')->group(function () {
         Route::get('/{budget}/create', [DepenseController::class, 'create'])->name('create');
         Route::post('/{budget}', [DepenseController::class, 'store'])->name('store');
@@ -69,5 +72,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::delete('/todo/task/{taskId}', [TodoController::class, 'destroyTask'])->name('todo.destroyTaskOutsideGroup');
 Route::patch('/todo/restore/{taskId}', [TodoController::class, 'restoreTask'])->name('todo.restoreTask');
 Route::delete('/todo/category/{categoryId}', [TodoController::class, 'destroyCategory'])->name('todo.destroyCategory');
+
+Route::get('/calculatrice', [\App\Http\Controllers\CalculatriceController::class, 'index'])->name('calculatrice.index');
+
 
 require __DIR__.'/auth.php';

@@ -20,13 +20,14 @@ class BudgetController extends Controller
     $request->validate([
         'nom' => 'required|string|max:255',
         'montant' => 'required|numeric|min:0',
-        'couleur' => 'nullable|string',
+         'couleur' => 'required|string|max:7', // ✅ ici on ajoute la validation
     ]);
 
     $budget = Budget::create([
         'user_id' => auth()->id(),
         'nom' => $request->nom,
         'montant' => $request->montant,
+        'couleur' => $request->couleur, // ✅ on enregistre la couleur choisie
     ]);
 
     // On stocke la couleur en session (liée à l'ID de l'enveloppe)

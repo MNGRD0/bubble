@@ -13,7 +13,9 @@ class Depense extends Model
         'budget_id',
         'nom',
         'montant',
+        'type', // 🟢 AJOUTE CE CHAMP !
         'date',
+        'user_id', // aussi important si tu veux filtrer par utilisateur
     ];
 
     public function budget()

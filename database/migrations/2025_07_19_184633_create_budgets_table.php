@@ -17,6 +17,8 @@ return new class extends Migration
         $table->string('nom');
         $table->decimal('montant', 10, 2); // Exemple : 1234.56
         $table->timestamps();
+        $table->string('couleur')->nullable(); // ou juste string('couleur') si obligatoire
+
     });
 }
 

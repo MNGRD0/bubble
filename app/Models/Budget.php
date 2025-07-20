@@ -13,6 +13,7 @@ class Budget extends Model
         'user_id',
         'nom',
         'montant',
+         'couleur',
     ];
 
     public function user()
