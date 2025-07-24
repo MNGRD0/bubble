@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up()
 {
-    Schema::table('depenses', function (Blueprint $table) {
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    Schema::table('journals', function (Blueprint $table) {
+        $table->longText('contenu')->nullable();
     });
 }
 
 public function down()
 {
-    Schema::table('depenses', function (Blueprint $table) {
-        $table->dropForeign(['user_id']);
-        $table->dropColumn('user_id');
+    Schema::table('journals', function (Blueprint $table) {
+        $table->dropColumn('contenu');
     });
 }
 

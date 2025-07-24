@@ -12,4 +12,6 @@ class CalculatriceController extends Controller
     return view('calculatrice.index');
 }
 
+
+
 }

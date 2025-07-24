@@ -5,6 +5,13 @@ use App\Http\Controllers\TodoController;
 use App\Http\Controllers\RecetteController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\DepenseController;
+use App\Http\Controllers\JournalController;
+use App\Http\Controllers\EntreeJournalController;
+use App\Http\Controllers\StickerController;
+use App\Http\Controllers\EvenementController;
+use App\Http\Controllers\CalendrierController;
+
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'))->name('welcome');
@@ -74,6 +81,35 @@ Route::patch('/todo/restore/{taskId}', [TodoController::class, 'restoreTask'])->
 Route::delete('/todo/category/{categoryId}', [TodoController::class, 'destroyCategory'])->name('todo.destroyCategory');
 
 Route::get('/calculatrice', [\App\Http\Controllers\CalculatriceController::class, 'index'])->name('calculatrice.index');
+Route::get('/reductions', function () {
+    return view('calculatrice.reductions');
+})->name('reductions');
+
+// J O U R N A L
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/journaux', [JournalController::class, 'index'])->name('journaux.index');
+    Route::get('/journaux/create', [JournalController::class, 'create'])->name('journaux.create');
+    Route::post('/journaux', [JournalController::class, 'store'])->name('journaux.store');
+    Route::get('/journaux/{journal}', [JournalController::class, 'show'])->name('journaux.show');
+    Route::post('/journaux/{journal}/entrees', [\App\Http\Controllers\EntreeJournalController::class, 'store'])->name('entrees.store');
+    Route::delete('/journaux/{journal}', [JournalController::class, 'destroy'])->name('journaux.destroy');
+    Route::put('/journaux/{journal}', [JournalController::class, 'update'])->name('journaux.update');
+Route::resource('journaux', JournalController::class);
+Route::post('/journaux/{journal}/entrees', [EntreeJournalController::class, 'store'])->name('entrees.store');
+
+
+// C A L E N D R I E R
+
+Route::resource('calendriers', CalendrierController::class);
+Route::resource('stickers', StickerController::class);
+Route::resource('evenements', EvenementController::class);
+
+
+
+});
+
 
 
 require __DIR__.'/auth.php';

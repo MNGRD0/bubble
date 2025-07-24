@@ -7,6 +7,7 @@ A faire :
 - La page des réglages - et du compte
 - L'accessibilité
 - Séparer le calculateur de solde et la calculatrice de page
+- Grossir le menu burger, l'améliorer, modifier les categories
 
 
 ** B U D G E T :
