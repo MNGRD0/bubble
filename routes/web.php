@@ -10,6 +10,9 @@ use App\Http\Controllers\EntreeJournalController;
 use App\Http\Controllers\StickerController;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\CalendrierController;
+use App\Http\Controllers\DossierController;
+use App\Http\Controllers\FichierController;
+use App\Http\Controllers\DessinController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -100,16 +103,31 @@ Route::resource('journaux', JournalController::class);
 Route::post('/journaux/{journal}/entrees', [EntreeJournalController::class, 'store'])->name('entrees.store');
 
 
-// C A L E N D R I E R
-
-Route::resource('calendriers', CalendrierController::class);
-Route::resource('stickers', StickerController::class);
-Route::resource('evenements', EvenementController::class);
-
+// F I C H I E R ! 
 
 
 });
 
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('dossiers', DossierController::class);
+    Route::resource('fichiers', FichierController::class)->only(['create', 'store', 'destroy']);
+});
+
+// D E S S I N S : 
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dessins', [DessinController::class, 'index'])->name('dessins.index');
+    Route::post('/dessins', [DessinController::class, 'store'])->name('dessins.store');
+    
+Route::delete('/dessins/delete-all', [DessinController::class, 'destroyAll'])->name('dessins.destroyAll');
+Route::delete('/dessins/{dessin}', [DessinController::class, 'destroy'])->name('dessins.destroy');
+
+    
+});
 
 
 require __DIR__.'/auth.php';

@@ -7,6 +7,7 @@ use App\Models\Sticker;
 use App\Models\Calendrier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class EvenementController extends Controller
 {
@@ -83,5 +84,28 @@ class EvenementController extends Controller
         $evenement->delete();
 
         return redirect()->route('evenements.index')->with('success', 'Événement supprimé.');
+    }
+
+    /**
+     * Affiche le calendrier mensuel avec les événements groupés par jour.
+     */
+    public function vueMois($year = null, $month = null)
+    {
+        // Si aucune année/mois n'est fourni → date actuelle
+        $date = Carbon::createFromDate($year ?? now()->year, $month ?? now()->month, 1)->startOfMonth();
+
+        $evenements = Evenement::whereMonth('date', $date->month)
+            ->whereYear('date', $date->year)
+            ->where('user_id', Auth::id())
+            ->with('sticker')
+            ->get()
+            ->groupBy(function ($event) {
+                return $event->date->format('Y-m-d');
+            });
+
+        return view('evenements.mois', [
+            'date' => $date,
+            'evenements' => $evenements,
+        ]);
     }
 }

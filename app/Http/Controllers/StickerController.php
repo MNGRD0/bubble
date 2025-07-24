@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers;
@@ -70,5 +69,3 @@ class StickerController extends Controller
         return redirect()->route('stickers.index')->with('success', 'Sticker supprimé.');
     }
 }
-
-

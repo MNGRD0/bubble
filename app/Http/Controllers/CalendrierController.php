@@ -64,4 +64,10 @@ class CalendrierController extends Controller
 
         return redirect()->route('calendriers.index')->with('success', 'Calendrier supprimé.');
     }
+
+    public function show(Calendrier $calendrier)
+{
+    return view('calendriers.show', compact('calendrier'));
+}
+
 }

@@ -8,6 +8,8 @@ A faire :
 - L'accessibilité
 - Séparer le calculateur de solde et la calculatrice de page
 - Grossir le menu burger, l'améliorer, modifier les categories
+- Catégorie : D E S S I N 
+- A la place de calendrier : Rappels
 
 
 ** B U D G E T :
