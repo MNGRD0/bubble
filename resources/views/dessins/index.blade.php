@@ -8,7 +8,6 @@
         <div class="flex gap-1 items-center">
             <button class="w-4 h-4 bg-yellow-300 rounded-sm border border-yellow-600"></button>
             <button class="w-4 h-4 bg-green-400 rounded-sm border border-green-600"></button>
-            {{-- ❌ Le bouton rouge réinitialise uniquement le dessin --}}
             <button onclick="clearCanvas()" class="w-4 h-4 bg-red-500 rounded-sm border border-red-700"></button>
         </div>
     </div>
@@ -48,16 +47,14 @@
 @if ($dessins->count())
     <h3 class="text-pink-600 font-bold mt-6 mb-2">🎨 Voir les dessins enregistrés</h3>
 
-    {{-- Bouton supprimer tous --}}
-    {{-- Bouton supprimer tous --}} 
-<form action="{{ url('/dessins/delete-all') }}" method="POST" onsubmit="return confirm('Supprimer TOUS les dessins ?')" class="mb-4">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
-        🗑️ Supprimer tous les dessins
-    </button>
-</form>
-
+    {{-- Supprimer tous les dessins --}}
+    <form action="{{ route('dessins.destroyAll') }}" method="POST" onsubmit="return confirm('Supprimer TOUS les dessins ?')" class="mb-4">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+            🗑️ Supprimer tous les dessins
+        </button>
+    </form>
 
     <div class="flex flex-wrap gap-3">
         @foreach ($dessins as $dessin)
@@ -70,6 +67,10 @@
                     @method('DELETE')
                     <button type="submit" class="bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-br">✕</button>
                 </form>
+
+                {{-- Télécharger le dessin --}}
+                <a href="{{ asset('storage/' . $dessin->chemin) }}" download 
+                   class="absolute top-0 right-0 z-10 bg-pink-400 text-white text-xs px-1 rounded-bl">💾</a>
 
                 {{-- Cliquer pour charger --}}
                 <img onclick="loadDrawing('{{ asset('storage/' . $dessin->chemin) }}')" 
@@ -87,7 +88,7 @@ let ctx = canvas.getContext('2d');
 let painting = false;
 let currentSize = 5;
 
-// 🔍 Rendu net
+// Retina fix
 const dpr = window.devicePixelRatio || 1;
 function resizeCanvas() {
     const styleHeight = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
@@ -99,7 +100,6 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Coordonnées
 function getCoords(e) {
     let rect = canvas.getBoundingClientRect();
     let clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -142,10 +142,8 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Sauvegarde AJAX (pas de rechargement)
 function saveDrawing() {
     let dataUrl = canvas.toDataURL('image/png');
-
     fetch("{{ route('dessins.store') }}", {
         method: "POST",
         headers: {
@@ -154,28 +152,9 @@ function saveDrawing() {
         },
         body: JSON.stringify({ image: dataUrl })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.image_url) {
-            // ➕ Ajouter le dessin dans la section enregistrée
-            let container = document.createElement('div');
-            container.className = "relative w-24 h-24 border border-pink-300 rounded shadow-sm overflow-hidden";
-
-            container.innerHTML = `
-                <form action="/dessins/${data.dessin_id}" method="POST"
-                      class="absolute top-0 left-0 z-10"
-                      onsubmit="return confirm('Supprimer ce dessin ?')">
-                    @csrf
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-br">✕</button>
-                </form>
-                <img onclick="loadDrawing('${data.image_url}')" 
-                     src="${data.image_url}" 
-                     alt="dessin" 
-                     class="w-full h-full object-cover cursor-pointer">
-            `;
-
-            document.querySelector('.flex.flex-wrap.gap-3')?.prepend(container);
+    .then(response => {
+        if (response.ok) {
+            location.reload(); // recharge les dessins
         } else {
             alert("Erreur lors de l'enregistrement.");
         }
@@ -183,8 +162,6 @@ function saveDrawing() {
     .catch(() => alert("Erreur réseau."));
 }
 
-
-// Charger un dessin enregistré
 function loadDrawing(url) {
     let img = new Image();
     img.onload = () => {
